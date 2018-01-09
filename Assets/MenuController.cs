@@ -1,24 +1,19 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class MenuController : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class MenuController : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public int sensivityX;
     public int sensivityY;
-    public Component swipePanel;
+    public Animation animation;
+    public GameObject swipePanel;
+    public GameObject scrollView;
 
     private float _mouseCoordinateDragStartX;
     private float _mouseCoordinateDragEndX;
     private float _mouseCoordinateDragStartY;
     private float _mouseCoordinateDragEndY;
-    private bool _isMenuOpened;
-    private bool _isSwipedUp;
 
-    void Start()
-    {
-        _isMenuOpened = false;
-        _isSwipedUp = false;
-    }
     public void OnBeginDrag(PointerEventData eventData)
     {
         _mouseCoordinateDragStartX = Input.mousePosition.x;
@@ -27,49 +22,29 @@ public class MenuController : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
 
     public void OnDrag(PointerEventData eventData)
     {
-               
+        
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         _mouseCoordinateDragEndX = Input.mousePosition.x;
-        _mouseCoordinateDragEndY = Input.mousePosition.y;
+        _mouseCoordinateDragEndY = Input.mousePosition.y;        
 
         if (Mathf.Abs(_mouseCoordinateDragStartX - _mouseCoordinateDragEndX) > Mathf.Abs(_mouseCoordinateDragStartY - _mouseCoordinateDragEndY))
         {
             SwipeHorizontally();
-        }
-        else
-        {
-            SwipeVertically();
-        }
+        } 
     }
 
     public void SwipeHorizontally()
     {
-        if (!_isMenuOpened)
+        if (swipePanel.GetComponent<RectTransform>().position.x <= 1)
         {
-            swipePanel.GetComponent<Animation>().PlayQueued("swipeRight", QueueMode.CompleteOthers);
-            _isMenuOpened = true;
+            animation.PlayQueued("swipeRight", QueueMode.CompleteOthers);
         }
-        else
+        else if (swipePanel.GetComponent<RectTransform>().position.x >= 261)
         {
-            swipePanel.GetComponent<Animation>().PlayQueued("swipeLeft", QueueMode.CompleteOthers);
-            _isMenuOpened = false;
-        }
-    }
-
-    public void SwipeVertically()
-    {
-        if (_isMenuOpened && !_isSwipedUp && Mathf.Abs(_mouseCoordinateDragStartX - _mouseCoordinateDragEndX) < Mathf.Abs(_mouseCoordinateDragStartY - _mouseCoordinateDragEndY) && _mouseCoordinateDragStartY < _mouseCoordinateDragEndY)
-        {
-            swipePanel.GetComponent<Animation>().PlayQueued("swipeUp", QueueMode.CompleteOthers);
-            _isSwipedUp = true;
-        }
-        else if (_isMenuOpened && _isSwipedUp && Mathf.Abs(_mouseCoordinateDragStartX - _mouseCoordinateDragEndX) < Mathf.Abs(_mouseCoordinateDragStartY - _mouseCoordinateDragEndY) && _mouseCoordinateDragStartY > _mouseCoordinateDragEndY)
-        {
-            swipePanel.GetComponent<Animation>().PlayQueued("swipeDown", QueueMode.CompleteOthers);
-            _isSwipedUp = false;
+            animation.PlayQueued("swipeLeft", QueueMode.CompleteOthers);
         }
     }
 }
